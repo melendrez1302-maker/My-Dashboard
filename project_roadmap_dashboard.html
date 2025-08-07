@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Proyectos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-card h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .summary-card p {
+            opacity: 0.9;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-card.development { border-left-color: #00b894; }
+        .project-card.reading { border-left-color: #fd79a8; }
+        .project-card.technical { border-left-color: #fdcb6e; }
+        .project-card.language { border-left-color: #6c5ce7; }
+        .project-card.academic { border-left-color: #a29bfe; }
+        .project-card.work { border-left-color: #e17055; }
+
+        .project-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .project-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .project-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-active { background: #00b894; color: white; }
+        .status-planning { background: #fdcb6e; color: #2d3436; }
+        .status-paused { background: #ddd; color: #636e72; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #74b9ff;
+            display: inline-block;
+        }
+
+        .objective {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 3px solid #74b9ff;
+        }
+
+        .milestones {
+            list-style: none;
+        }
+
+        .milestone {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .milestone:last-child {
+            border-bottom: none;
+        }
+
+        .milestone-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #74b9ff;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .milestone-checkbox.completed {
+            background: #00b894;
+            border-color: #00b894;
+        }
+
+        .milestone-checkbox.completed::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        .milestone-text {
+            flex-grow: 1;
+        }
+
+        .milestone-date {
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+
+        .results-section {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 80px;
+        }
+
+        .sub-projects {
+            margin-top: 15px;
+        }
+
+        .sub-project {
+            background: #f1f3f4;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sub-project-name {
+            font-weight: 500;
+        }
+
+        .priority {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .priority-high { background: #ff6b6b; color: white; }
+        .priority-medium { background: #feca57; color: #2d3436; }
+        .priority-low { background: #48dbfb; color: white; }
+
+        .time-allocation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .update-btn {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .projects-navigation {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 2px solid #f8f9fa;
+        }
+
+        .nav-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .projects-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .nav-project-item {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-project-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-project-item.nav-development { border-left-color: #00b894; }
+        .nav-project-item.nav-reading { border-left-color: #fd79a8; }
+        .nav-project-item.nav-technical { border-left-color: #fdcb6e; }
+        .nav-project-item.nav-language { border-left-color: #6c5ce7; }
+        .nav-project-item.nav-academic { border-left-color: #a29bfe; }
+        .nav-project-item.nav-work { border-left-color: #e17055; }
+
+        .nav-project-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .nav-project-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .nav-progress-bar {
+            width: 60%;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .nav-progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .nav-progress-text {
+            font-weight: bold;
+            color: #636e72;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Percy Meléndrez</h1>
+            <h2>🚀 Dashboard de Proyectos</h2>
+            <p>Gestión integral de objetivos personales y profesionales</p>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3 id="totalProjects">6</h3>
+                <p>Proyectos Totales</p>
+            </div>
+            <div class="summary-card">
+                <h3 id="activeProjects">4</h3>
+                <p>Activos</p>
+            </div>
+            <div class="summary-card">
+                <h3 id="completedMilestones">12</h3>
+                <p>Hitos Completados</p>
+            </div>
+            <div class="summary-card">
+                <h3 id="totalProgress">45%</h3>
+                <p>Progreso General</p>
+            </div>
+        </div>
+
+        <div class="projects-navigation">
+            <div class="nav-title">📊 Navegación Rápida - Progreso de Proyectos</div>
+            <div class="projects-nav-grid">
+                <div class="nav-project-item nav-development" onclick="scrollToProject('bootcamp')">
+                    <div class="nav-project-title">🤖 Bootcamp IA</div>
+                    <div class="nav-project-progress">
+                        <div class="nav-progress-bar">
+                            <div class="nav-progress-fill" style="width: 15%"></div>
+                        </div>
+                        <span class="nav-progress-text">15%</span>
+                    </div>
+                </div>
+                <div class="nav-project-item nav-reading" onclick="scrollToProject('reading')">
+                    <div class="nav-project-title">📚 Lectura</div>
+                    <div class="nav-project-progress">
+                        <div class="nav-progress-bar">
+                            <div class="nav-progress-fill" style="width: 60%"></div>
+                        </div>
+                        <span class="nav-progress-text">60%</span>
+                    </div>
+                </div>
+                <div class="nav-project-item nav-technical" onclick="scrollToProject('powerbi')">
+                    <div class="nav-project-title">📊 Power BI</div>
+                    <div class="nav-project-progress">
+                        <div class="nav-progress-bar">
+                            <div class="nav-progress-fill" style="width: 15%"></div>
+                        </div>
+                        <span class="nav-progress-text">15%</span>
+                    </div>
+                </div>
+                <div class="nav-project-item nav-language" onclick="scrollToProject('english')">
+                    <div class="nav-project-title">🇺🇸 Inglés Slang</div>
+                    <div class="nav-project-progress">
+                        <div class="nav-progress-bar">
+                            <div class="nav-progress-fill" style="width: 40%"></div>
+                        </div>
+                        <span class="nav-progress-text">40%</span>
+                    </div>
+                </div>
+                <div class="nav-project-item nav-academic" onclick="scrollToProject('ucsp')">
+                    <div class="nav-project-title">📝 Ensayo UCSP</div>
+                    <div class="nav-project-progress">
+                        <div class="nav-progress-bar">
+                            <div class="nav-progress-fill" style="width: 20%"></div>
+                        </div>
+                        <span class="nav-progress-text">20%</span>
+                    </div>
+                </div>
+                <div class="nav-project-item nav-work" onclick="scrollToProject('epiroc')">
+                    <div class="nav-project-title">⚒️ Epiroc</div>
+                    <div class="nav-project-progress">
+                        <div class="nav-progress-bar">
+                            <div class="nav-progress-fill" style="width: 65%"></div>
+                        </div>
+                        <span class="nav-progress-text">65%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="projects-grid">
+            <!-- Proyecto 1: Bootcamp IA -->
+            <div class="project-card development" id="bootcamp">
+                <div class="project-header">
+                    <div>
+                        <div class="project-title">🤖 Bootcamp IA</div>
+                        <span class="project-status status-active">Activo</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 15%"></div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📋 Objetivo</div>
+                    <div class="objective">
+                        Aumentar la productividad, ser más competitivo y generar una startup mediante el dominio de tecnologías de IA avanzadas
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🎯 Milestones</div>
+                    <ul class="milestones">
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Aprender conceptos y a construir LLM apps con LangChain</div>
+                            <div class="milestone-date">En progreso</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Aprender conceptos y a construir Agentes de IA sencillos con Crew AI</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Aprender conceptos y a construir Agentes de IA avanzados con LangGraph</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Generar una Startup (Borrador)</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📊 Progreso</div>
+                    <div class="progress-section">
+                        <span><strong>Secciones completadas:</strong></span>
+                        <input type="number" class="progress-input" value="59" min="0" max="271" id="bootcamp-progress">
+                        <span>/ 271 secciones</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🏆 Resultados</div>
+                    <div class="editable-content" contenteditable="true" id="bootcamp-results">
+                        <p><strong>Logros actuales:</strong></p>
+                        <p>• Fundamentos de LangChain en progreso<br>
+                        • Comprensión básica de LLM integrations<br>
+                        • Primer proyecto práctico iniciado</p>
+                    </div>
+                </div>
+
+                <div class="time-allocation">
+                    <span><strong>⏰ Tiempo semanal (Recursos):</strong></span>
+                    <input type="number" class="time-input" value="7" min="1" max="40" id="bootcamp-time">
+                    <span>horas</span>
+                    <button class="update-btn" onclick="updateProgress('bootcamp')">Actualizar</button>
+                </div>
+            </div>
+
+            <!-- Proyecto 2: Lectura -->
+            <div class="project-card reading" id="reading">
+                <div class="project-header">
+                    <div>
+                        <div class="project-title">📚 Programa de Lectura</div>
+                        <span class="project-status status-active">Activo</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 60%"></div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📋 Objetivo</div>
+                    <div class="objective">
+                        Completar lectura comprensiva de 2 libros clave para desarrollo personal y toma de decisiones
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📖 Sub-proyectos</div>
+                    <div class="sub-projects">
+                        <div class="sub-project">
+                            <span class="sub-project-name">Pensar rápido, pensar despacio</span>
+                            <span class="priority priority-high">Alta</span>
+                        </div>
+                        <div class="sub-project">
+                            <span class="sub-project-name">El monje que vendió su ferrari</span>
+                            <span class="priority priority-medium">Media</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🎯 Milestones</div>
+                    <ul class="milestones">
+                        <li class="milestone">
+                            <div class="milestone-checkbox completed"></div>
+                            <div class="milestone-text">Adquirir ambos libros</div>
+                            <div class="milestone-date">✅ Completado</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox completed"></div>
+                            <div class="milestone-text">Leer 50% "Pensar rápido..."</div>
+                            <div class="milestone-date">✅ Completado</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Completar "Pensar rápido..."</div>
+                            <div class="milestone-date">En progreso</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Leer "El monje que vendió..."</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Escribir resumen ejecutivo de ambos</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🏆 Resultados</div>
+                    <div class="results-section">
+                        <p><strong>Progreso actual:</strong></p>
+                        <p>• 60% del primer libro completado<br>
+                        • Notas y reflexiones documentadas<br>
+                        • Aplicación práctica de conceptos en decisiones diarias</p>
+                    </div>
+                </div>
+
+                <div class="time-allocation">
+                    <span><strong>⏰ Tiempo semanal:</strong> 5 horas</span>
+                    <button class="update-btn" onclick="updateProgress('reading')">Actualizar</button>
+                </div>
+            </div>
+
+            <!-- Proyecto 3: Power BI -->
+            <div class="project-card technical" id="powerbi">
+                <div class="project-header">
+                    <div>
+                        <div class="project-title">📊 Curso Power BI</div>
+                        <span class="project-status status-planning">En Planificación</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 15%"></div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📋 Objetivo</div>
+                    <div class="objective">
+                        Certificarse en Power BI para crear dashboards avanzados y análisis de datos empresariales
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🎯 Milestones</div>
+                    <ul class="milestones">
+                        <li class="milestone">
+                            <div class="milestone-checkbox completed"></div>
+                            <div class="milestone-text">Inscribirse en curso certificado</div>
+                            <div class="milestone-date">✅ Completado</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Completar módulos básicos</div>
+                            <div class="milestone-date">Próximo</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Crear primer dashboard con datos reales</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Módulos avanzados y DAX</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Examen de certificación</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🏆 Resultados</div>
+                    <div class="results-section">
+                        <p><strong>Estado inicial:</strong></p>
+                        <p>• Curso seleccionado y material descargado<br>
+                        • Ambiente de práctica configurado<br>
+                        • Cronograma de estudio definido</p>
+                    </div>
+                </div>
+
+                <div class="time-allocation">
+                    <span><strong>⏰ Tiempo semanal:</strong> 6 horas</span>
+                    <button class="update-btn" onclick="updateProgress('powerbi')">Actualizar</button>
+                </div>
+            </div>
+
+            <!-- Proyecto 4: Inglés Slang -->
+            <div class="project-card language" id="english">
+                <div class="project-header">
+                    <div>
+                        <div class="project-title">🇺🇸 Inglés Slang</div>
+                        <span class="project-status status-active">Activo</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 40%"></div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📋 Objetivo</div>
+                    <div class="objective">
+                        Dominar el inglés coloquial y slang para comunicación fluida en contextos informales y profesionales
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🎯 Milestones</div>
+                    <ul class="milestones">
+                        <li class="milestone">
+                            <div class="milestone-checkbox completed"></div>
+                            <div class="milestone-text">Identificar fuentes de aprendizaje</div>
+                            <div class="milestone-date">✅ Completado</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox completed"></div>
+                            <div class="milestone-text">Aprender 100 expresiones básicas</div>
+                            <div class="milestone-date">✅ Completado</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Práctica conversacional semanal</div>
+                            <div class="milestone-date">En progreso</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Dominar slang profesional/técnico</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Evaluación de fluidez informal</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🏆 Resultados</div>
+                    <div class="results-section">
+                        <p><strong>Progreso actual:</strong></p>
+                        <p>• Vocabulario slang: 100+ expresiones<br>
+                        • Consumo regular de contenido en inglés<br>
+                        • Mejora notable en comprensión informal</p>
+                    </div>
+                </div>
+
+                <div class="time-allocation">
+                    <span><strong>⏰ Tiempo semanal:</strong> 4 horas</span>
+                    <button class="update-btn" onclick="updateProgress('english')">Actualizar</button>
+                </div>
+            </div>
+
+            <!-- Proyecto 5: Ensayo UCSP -->
+            <div class="project-card academic" id="ucsp">
+                <div class="project-header">
+                    <div>
+                        <div class="project-title">📝 Ensayo UCSP</div>
+                        <span class="project-status status-planning">En Planificación</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 20%"></div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📋 Objetivo</div>
+                    <div class="objective">
+                        Completar ensayo académico para UCSP cumpliendo con los más altos estándares de calidad y rigor académico
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🎯 Milestones</div>
+                    <ul class="milestones">
+                        <li class="milestone">
+                            <div class="milestone-checkbox completed"></div>
+                            <div class="milestone-text">Definir tema y enfoque del ensayo</div>
+                            <div class="milestone-date">✅ Completado</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Investigación bibliográfica exhaustiva</div>
+                            <div class="milestone-date">En progreso</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Estructura y esquema detallado</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Primera versión completa</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Revisión final y entrega</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🏆 Resultados</div>
+                    <div class="results-section">
+                        <p><strong>Avance inicial:</strong></p>
+                        <p>• Tema definido y aprobado<br>
+                        • 15 fuentes bibliográficas identificadas<br>
+                        • Marco conceptual preliminar establecido</p>
+                    </div>
+                </div>
+
+                <div class="time-allocation">
+                    <span><strong>⏰ Tiempo semanal:</strong> 6 horas</span>
+                    <button class="update-btn" onclick="updateProgress('ucsp')">Actualizar</button>
+                </div>
+            </div>
+
+            <!-- Proyecto 6: Epiroc - Trabajo -->
+            <div class="project-card work" id="epiroc">
+                <div class="project-header">
+                    <div>
+                        <div class="project-title">⚒️ Epiroc - Proyectos Mineros</div>
+                        <span class="project-status status-active">Activo</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📋 Objetivo</div>
+                    <div class="objective">
+                        Gestionar exitosamente la cartera de 8 proyectos mineros, asegurando la satisfacción del cliente y el cumplimiento de objetivos comerciales
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🏭 Sub-proyectos</div>
+                    <div class="sub-projects">
+                        <div class="sub-project">
+                            <span class="sub-project-name">Las Bambas</span>
+                            <span class="priority priority-high">Alta</span>
+                        </div>
+                        <div class="sub-project">
+                            <span class="sub-project-name">Angloamerican Quellaveco</span>
+                            <span class="priority priority-high">Alta</span>
+                        </div>
+                        <div class="sub-project">
+                            <span class="sub-project-name">Hudbay</span>
+                            <span class="priority priority-medium">Media</span>
+                        </div>
+                        <div class="sub-project">
+                            <span class="sub-project-name">Mur Wy</span>
+                            <span class="priority priority-low">Baja</span>
+                        </div>
+                        <div class="sub-project">
+                            <span class="sub-project-name">Yanacocha</span>
+                            <span class="priority priority-medium">Media</span>
+                        </div>
+                        <div class="sub-project">
+                            <span class="sub-project-name">Cosapi</span>
+                            <span class="priority priority-medium">Media</span>
+                        </div>
+                        <div class="sub-project">
+                            <span class="sub-project-name">Beijing Shougang</span>
+                            <span class="priority priority-high">Alta</span>
+                        </div>
+                        <div class="sub-project">
+                            <span class="sub-project-name">Shougang Hierro</span>
+                            <span class="priority priority-high">Alta</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🎯 Milestones Generales</div>
+                    <ul class="milestones">
+                        <li class="milestone">
+                            <div class="milestone-checkbox completed"></div>
+                            <div class="milestone-text">Diagnóstico inicial de todos los proyectos</div>
+                            <div class="milestone-date">✅ Completado</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox completed"></div>
+                            <div class="milestone-text">Establecer KPIs por proyecto</div>
+                            <div class="milestone-date">✅ Completado</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox completed"></div>
+                            <div class="milestone-text">Implementar sistema de seguimiento</div>
+                            <div class="milestone-date">✅ Completado</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Optimizar 4 proyectos prioritarios</div>
+                            <div class="milestone-date">En progreso</div>
+                        </li>
+                        <li class="milestone">
+                            <div class="milestone-checkbox"></div>
+                            <div class="milestone-text">Evaluación trimestral de resultados</div>
+                            <div class="milestone-date">Pendiente</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🏆 Resultados</div>
+                    <div class="results-section">
+                        <p><strong>Logros actuales:</strong></p>
+                        <p>• 8 proyectos activos gestionados<br>
+                        • 4 proyectos con prioridad alta identificados<br>
+                        • Sistema de reporting implementado<br>
+                        • Satisfacción del cliente: 85% promedio</p>
+                    </div>
+                </div>
+
+                <div class="time-allocation">
+                    <span><strong>⏰ Tiempo semanal:</strong> 40 horas</span>
+                    <button class="update-btn" onclick="updateProgress('epiroc')">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para navegar a proyectos específicos
+        function scrollToProject(projectId) {
+            const project = document.getElementById(projectId);
+            if (project) {
+                project.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Efecto visual al llegar al proyecto
+                project.style.transform = 'scale(1.02)';
+                project.style.boxShadow = '0 15px 40px rgba(116, 185, 255, 0.3)';
+                
+                setTimeout(() => {
+                    project.style.transform = 'scale(1)';
+                    project.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
+                }, 800);
+            }
+        }
+
+        // Función para actualizar progreso basado en inputs editables
+        function updateProgressFromInputs() {
+            const bootcampProgress = document.getElementById('bootcamp-progress').value;
+            const bootcampTotal = 271;
+            const progressPercentage = Math.round((bootcampProgress / bootcampTotal) * 100);
+            
+            // Actualizar barra de progreso del proyecto
+            const projectProgressBar = document.querySelector('#bootcamp .progress-fill');
+            projectProgressBar.style.width = progressPercentage + '%';
+            
+            // Actualizar barra de navegación
+            const navProgressBar = document.querySelector('.nav-development .nav-progress-fill');
+            const navProgressText = document.querySelector('.nav-development .nav-progress-text');
+            navProgressBar.style.width = progressPercentage + '%';
+            navProgressText.textContent = progressPercentage + '%';
+            
+            updateSummaryCards();
+        }
+
+        // Event listeners para inputs editables
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressInput = document.getElementById('bootcamp-progress');
+            const timeInput = document.getElementById('bootcamp-time');
+            
+            if (progressInput) {
+                progressInput.addEventListener('input', updateProgressFromInputs);
+                progressInput.addEventListener('change', updateProgressFromInputs);
+            }
+            
+            if (timeInput) {
+                timeInput.addEventListener('change', function() {
+                    const timeValue = this.value;
+                    console.log(`Tiempo semanal actualizado: ${timeValue} horas`);
+                    // Aquí podrías guardar el valor o hacer otras acciones
+                });
+            }
+            
+            // Hacer editables los resultados
+            const editableContent = document.getElementById('bootcamp-results');
+            if (editableContent) {
+                editableContent.addEventListener('blur', function() {
+                    console.log('Resultados actualizados:', this.innerHTML);
+                    // Aquí podrías guardar el contenido
+                });
+                
+                // Placeholder text cuando está vacío
+                editableContent.addEventListener('focus', function() {
+                    if (this.textContent.trim() === '') {
+                        this.innerHTML = '<p><strong>Logros actuales:</strong></p><p>• [Escribe aquí tus logros...]</p>';
+                    }
+                });
+            }
+        });
+
+        function updateSummaryCards() {
+            const totalMilestones = document.querySelectorAll('.milestone-checkbox').length;
+            const completedMilestones = document.querySelectorAll('.milestone-checkbox.completed').length;
+            const activeProjects = document.querySelectorAll('.status-active').length;
+            const totalProgress = Math.round((completedMilestones / totalMilestones) * 100);
+
+            document.getElementById('completedMilestones').textContent = completedMilestones;
+            document.getElementById('activeProjects').textContent = activeProjects;
+            document.getElementById('totalProgress').textContent = totalProgress + '%';
+        }
+
+        function updateProgress(projectId) {
+            const updates = {
+                'bootcamp': {
+                    message: '¡Excelente! ¿Completaste algún módulo nuevo del Bootcamp IA?',
+                    action: () => {
+                        // Aquí podrías abrir un modal para actualizar el progreso
+                        alert('Funcionalidad de actualización para Bootcamp IA. En una versión completa, esto abriría un formulario para actualizar el progreso específico.');
+                    }
+                },
+                'reading': {
+                    message: '📚 ¿Avanzaste en la lectura de alguno de los libros?',
+                    action: () => {
+                        alert('Funcionalidad de actualización para Lectura. Aquí podrías registrar páginas leídas, capítulos completados, etc.');
+                    }
+                },
+                'powerbi': {
+                    message: '📊 ¿Iniciaste el curso de Power BI o completaste algún módulo?',
+                    action: () => {
+                        alert('Funcionalidad de actualización para Power BI. Aquí registrarías módulos completados, ejercicios realizados, etc.');
+                    }
+                },
+                'english': {
+                    message: '🇺🇸 ¿Practicaste inglés esta semana o aprendiste nuevas expresiones?',
+                    action: () => {
+                        alert('Funcionalidad de actualización para Inglés Slang. Registrarías nuevas expresiones aprendidas, horas de práctica, etc.');
+                    }
+                },
+                'ucsp': {
+                    message: '📝 ¿Avanzaste en la investigación o escritura del ensayo UCSP?',
+                    action: () => {
+                        alert('Funcionalidad de actualización para Ensayo UCSP. Registrarías avance en investigación, páginas escritas, fuentes consultadas, etc.');
+                    }
+                },
+                'epiroc': {
+                    message: '⚒️ ¿Hay actualizaciones en alguno de los 8 proyectos de Epiroc?',
+                    action: () => {
+                        alert('Funcionalidad de actualización para Epiroc. En la versión completa podrías actualizar el estado de cada sub-proyecto individualmente.');
+                    }
+                }
+            };
+
+            const update = updates[projectId];
+            if (update) {
+                const response = confirm(update.message + '\n\n¡Haz clic en OK para continuar con la actualización!');
+                if (response) {
+                    update.action();
+                }
+            }
+        }
+
+        // Función para simular actualizaciones automáticas
+        function simulateProgress() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach((bar, index) => {
+                setTimeout(() => {
+                    const currentWidth = parseInt(bar.style.width);
+                    if (currentWidth < 100) {
+                        bar.style.width = Math.min(currentWidth + Math.random() * 10, 100) + '%';
+                    }
+                }, index * 500);
+            });
+        }
+
+        // Inicializar el dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSummaryCards();
+            
+            // Mensaje de bienvenida
+            setTimeout(() => {
+                if (confirm('¡Dashboard cargado exitosamente! 🚀\n\n✅ Haz clic en los círculos para marcar milestones como completados\n✅ Usa los botones "Actualizar" para registrar progreso\n✅ Los datos se actualizan automáticamente\n\n¿Te gustaría una demostración rápida?')) {
+                    // Demostración rápida
+                    alert('🎯 CÓMO USAR EL DASHBOARD:\n\n1. Cada proyecto muestra: Objetivos → Milestones → Resultados\n2. Haz clic en los círculos (○) para marcar milestones completados\n3. Las barras de progreso se actualizan automáticamente\n4. Los botones "Actualizar" te ayudan a registrar avances\n5. Las tarjetas superiores muestran el resumen general\n\n¡Ya puedes empezar a gestionar tus proyectos!');
+                }
+            }, 1000);
+        });
+
+        // Función para exportar datos (funcionalidad futura)
+        function exportData() {
+            const projectData = {
+                projects: [],
+                summary: {
+                    totalProjects: 6,
+                    activeProjects: document.getElementById('activeProjects').textContent,
+                    completedMilestones: document.getElementById('completedMilestones').textContent,
+                    totalProgress: document.getElementById('totalProgress').textContent
+                },
+                lastUpdate: new Date().toISOString()
+            };
+            
+            console.log('Datos del dashboard:', projectData);
+            alert('En una versión completa, aquí podrías exportar todos los datos a Excel, PDF o Google Sheets para respaldo y análisis.');
+        }
+
+        // Función para configurar recordatorios (funcionalidad futura)
+        function setReminders() {
+            alert('🔔 RECORDATORIOS CONFIGURABLES:\n\n• Revisión semanal de progreso\n• Deadlines de milestones importantes\n• Tiempo de estudio por proyecto\n• Evaluaciones mensuales\n\nEn la versión completa podrías integrar con Google Calendar o recibir notificaciones por email.');
+        }
+
+        // Agregar algunas funcionalidades adicionales con teclas de acceso rápido
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey) {
+                switch(event.key) {
+                    case 's':
+                        event.preventDefault();
+                        alert('💾 Función guardar - En desarrollo. Los cambios se guardarían automáticamente.');
+                        break;
+                    case 'e':
+                        event.preventDefault();
+                        exportData();
+                        break;
+                    case 'r':
+                        event.preventDefault();
+                        setReminders();
+                        break;
+                }
+            }
+        });
+
+        // Función para agregar notas rápidas (funcionalidad futura)
+        function addQuickNote(projectId) {
+            const note = prompt('✏️ Agregar nota rápida para este proyecto:');
+            if (note && note.trim()) {
+                alert(`Nota agregada: "${note}"\n\nEn la versión completa, esta nota se guardaría y sería visible en el historial del proyecto.`);
+            }
+        }
+    </script>
+</body>
+</html>
