@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percy Melendrez – Dashboard de Proyectos</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background: #111;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem;
+            background: #222;
+            color: #eee;
+        }
+        .stats div {
+            text-align: center;
+        }
+        .progress-section {
+            display: flex;
+            justify-content: space-around;
+            margin: 1rem;
+        }
+        .card {
+            background: white;
+            padding: 1rem;
+            margin: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .project-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .project-card {
+            background: #fff;
+            margin: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 300px;
+        }
+        .project-card h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Percy Melendrez – Dashboard de Proyectos 🚀</h1>
+    </header>
+
+    <section class="stats">
+        <div>
+            <h2>Total Proyectos</h2>
+            <p>8</p>
+        </div>
+        <div>
+            <h2>Activos</h2>
+            <p>5</p>
+        </div>
+        <div>
+            <h2>En pausa</h2>
+            <p>2</p>
+        </div>
+        <div>
+            <h2>Inactivos</h2>
+            <p>1</p>
+        </div>
+    </section>
+
+    <section class="progress-section">
+        <div class="card">
+            <h3>Progreso General</h3>
+            <p>75%</p>
+        </div>
+        <div class="card">
+            <h3>Progreso Laboral (Epiroc)</h3>
+            <p>60%</p>
+        </div>
+        <div class="card">
+            <h3>Progreso Personal</h3>
+            <p>82%</p>
+        </div>
+    </section>
+
+    <section class="project-list">
+        <div class="project-card">
+            <h3>Bootcamp IA</h3>
+            <p>Progreso: 50 / 100</p>
+            <p>Estado: Activo</p>
+        </div>
+        <div class="project-card">
+            <h3>Lectura</h3>
+            <p>Libros en curso: 2</p>
+        </div>
+        <div class="project-card">
+            <h3>Curso Power BI</h3>
+            <p>Progreso: 30 / 50</p>
+        </div>
+        <div class="project-card">
+            <h3>Epiroc – Trabajo</h3>
+            <p>Subproyectos: 8 clientes</p>
+        </div>
+    </section>
+</body>
+</html>
